@@ -104,36 +104,19 @@ export function Navigation({ items }: NavigationProps) {
   const handleMouseEnter = (itemName: string) => {
     if (itemName === "Research" || itemName === "Publications") {
       setActiveDropdown(itemName);
-      setSearchOpen(false); // Close search when hovering over menu items
+      setSearchOpen(false);
     }
-  };
-
-  const handleNavLeave = () => {
-    // Add a small delay before closing to allow moving to mega menu
-    setTimeout(() => {
-      setActiveDropdown(null);
-    }, 100);
-  };
-
-  const handleMegaMenuEnter = () => {
-    // Keep the mega menu open when hovering over it
-  };
-
-  const handleMegaMenuLeave = () => {
-    setActiveDropdown(null);
   };
 
   const handleSearchToggle = () => {
     setSearchOpen(!searchOpen);
-    setActiveDropdown(null); // Close mega menu when opening search
+    setActiveDropdown(null);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Handle search submission
       console.log("Searching for:", searchQuery);
-      // You can implement actual search functionality here
     }
   };
 
@@ -179,101 +162,103 @@ export function Navigation({ items }: NavigationProps) {
 
       {/* Main Navbar */}
       <header className="bg-white shadow-lg relative">
-        <nav className="relative">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
-              {/* Menu Navigation */}
-              <div className="hidden lg:flex">
-                <div className="flex items-center space-x-1">
-                  {items.map((item) => (
-                    <div
-                      key={item.name}
-                      className="relative"
-                      onMouseEnter={() => handleMouseEnter(item.name)}
-                      onMouseLeave={handleNavLeave}
-                    >
-                      {(item.name === "Research" || item.name === "Publications") ? (
-                        <button
-                          className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 ${
-                            activeDropdown === item.name 
-                              ? 'text-[#407c0f]' 
-                              : 'text-gray-700 hover:text-[#407c0f]'
-                          }`}
-                        >
-                          {item.name}
-                          <svg
-                            className={`ml-1 h-4 w-4 transition-transform duration-200 ${
-                              activeDropdown === item.name ? 'rotate-180' : ''
+        <div 
+          className="relative"
+          onMouseLeave={() => setActiveDropdown(null)}
+        >
+          <nav className="relative">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex h-16 items-center justify-between">
+                {/* Menu Navigation */}
+                <div className="hidden lg:flex">
+                  <div className="flex items-center space-x-1">
+                    {items.map((item) => (
+                      <div
+                        key={item.name}
+                        className="relative"
+                        onMouseEnter={() => handleMouseEnter(item.name)}
+                      >
+                        {(item.name === "Research" || item.name === "Publications") ? (
+                          <button
+                            className={`flex items-center px-4 py-2 text-base font-bold transition-all duration-200 ${
+                              activeDropdown === item.name 
+                                ? 'text-[#407c0f]' 
+                                : 'text-gray-700 hover:text-[#407c0f]'
                             }`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
+                            {item.name}
+                            <svg
+                              className={`ml-1 h-4 w-4 transition-transform duration-200 ${
+                                activeDropdown === item.name ? 'rotate-180' : ''
+                              }`}
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <Link
+                            to={item.href}
+                            className="flex items-center px-4 py-2 text-base font-bold transition-all duration-200 text-gray-700 hover:text-[#407c0f]"
+                          >
+                            {item.name}
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Search */}
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <button
+                      onClick={handleSearchToggle}
+                      className={`flex items-center px-4 py-2 text-base font-bold transition-all duration-200 ${
+                        searchOpen 
+                          ? 'text-[#407c0f]' 
+                          : 'text-gray-700 hover:text-[#407c0f]'
+                      }`}
+                    >
+                      <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      Search
+                    </button>
+                  </div>
+
+                  {/* Mobile menu button */}
+                  <div className="lg:hidden">
+                    <button
+                      type="button"
+                      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                      className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset transition-colors"
+                      style={{ '--tw-ring-color': '#407c0f' } as React.CSSProperties}
+                    >
+                      <span className="sr-only">Open main menu</span>
+                      {mobileMenuOpen ? (
+                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                       ) : (
-                        <Link
-                          to={item.href}
-                          className="flex items-center px-4 py-2 text-base font-medium transition-all duration-200 text-gray-700 hover:text-[#407c0f]"
-                        >
-                          {item.name}
-                        </Link>
+                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
                       )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Search */}
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <button
-                    onClick={handleSearchToggle}
-                    className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 ${
-                      searchOpen 
-                        ? 'text-[#407c0f]' 
-                        : 'text-gray-700 hover:text-[#407c0f]'
-                    }`}
-                  >
-                    <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    Search
-                  </button>
-                </div>
-
-                {/* Mobile menu button */}
-                <div className="lg:hidden">
-                  <button
-                    type="button"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset transition-colors"
-                    style={{ '--tw-ring-color': '#407c0f' } as React.CSSProperties}
-                  >
-                    <span className="sr-only">Open main menu</span>
-                    {mobileMenuOpen ? (
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    ) : (
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                      </svg>
-                    )}
-                  </button>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </nav>
 
           {/* Full-width Mega Menu */}
           {activeDropdown && (activeDropdown === "Research" || activeDropdown === "Publications") && (
             <div 
               className="absolute top-full left-0 w-full bg-white shadow-2xl border-t-4 z-40"
               style={{ borderTopColor: '#B40D05' }}
-              onMouseEnter={handleMegaMenuEnter}
-              onMouseLeave={handleMegaMenuLeave}
             >
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -323,126 +308,126 @@ export function Navigation({ items }: NavigationProps) {
               </div>
             </div>
           )}
+        </div>
 
-          {/* Search Dropdown */}
-          {searchOpen && (
-            <div className="absolute top-full left-0 w-full bg-white shadow-2xl border-t-4 z-40" style={{ borderTopColor: '#B40D05' }}>
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                {/* Search Form */}
-                <form onSubmit={handleSearchSubmit} className="mb-8">
-                  <div className="relative max-w-2xl mx-auto">
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search publications, research, events..."
-                      className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#407c0f] transition-colors"
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 text-white font-medium rounded-md transition-colors duration-200"
-                      style={{ backgroundColor: '#407c0f' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2d5a0a'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#407c0f'}
-                    >
-                      Search
-                    </button>
-                  </div>
-                </form>
-
-                {/* Trending Categories */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: '#B40D05' }}>
-                    Trending Categories
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {trendingCategories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => {
-                          setSearchQuery(category);
-                          handleSearchSubmit({ preventDefault: () => {} } as React.FormEvent);
-                        }}
-                        className="text-left p-3 rounded-lg border border-gray-200 hover:border-[#407c0f] hover:bg-gray-50 transition-colors duration-200 group"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <svg className="h-4 w-4 text-gray-400 group-hover:text-[#407c0f]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                          </svg>
-                          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                            {category}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quick Links */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <div className="flex flex-wrap gap-4">
-                    <span className="text-sm text-gray-500">Quick links:</span>
-                    <Link to="/publications" className="text-sm text-[#407c0f] hover:underline">All Publications</Link>
-                    <Link to="/research" className="text-sm text-[#407c0f] hover:underline">Research Areas</Link>
-                    <Link to="/events" className="text-sm text-[#407c0f] hover:underline">Latest Events</Link>
-                    <Link to="/about" className="text-sm text-[#407c0f] hover:underline">About IRPIA</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Mobile menu */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg border-t border-gray-200 z-40">
-              <div className="px-4 py-3 space-y-1">
-                {items.map((item) => (
-                  <div key={item.name}>
-                    <Link
-                      to={item.href}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-[#B40D05] transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                    
-                    {/* Mobile submenu for Research and Publications */}
-                    {(item.name === "Research" || item.name === "Publications") && (
-                      <div className="ml-4 mt-2 space-y-2">
-                        {(item.name === "Research" ? researchMegaMenu : publicationsMegaMenu).map((subItem) => (
-                          <Link
-                            key={subItem.name}
-                            to={subItem.href}
-                            className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#407c0f] transition-colors"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-                
-                {/* Mobile Search */}
-                <div className="mt-4 pt-4 border-t border-gray-200">
+        {/* Search Dropdown */}
+        {searchOpen && (
+          <div className="absolute top-full left-0 w-full bg-white shadow-2xl border-t-4 z-40" style={{ borderTopColor: '#B40D05' }}>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+              {/* Search Form */}
+              <form onSubmit={handleSearchSubmit} className="mb-8">
+                <div className="relative max-w-2xl mx-auto">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search publications, research, events..."
+                    className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-[#407c0f] transition-colors"
+                  />
                   <button
-                    onClick={() => {
-                      setSearchOpen(!searchOpen);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex items-center w-full px-3 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-[#B40D05] transition-colors rounded-md"
+                    type="submit"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 text-white font-medium rounded-md transition-colors duration-200"
+                    style={{ backgroundColor: '#407c0f' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2d5a0a'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#407c0f'}
                   >
-                    <svg className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
                     Search
                   </button>
                 </div>
+              </form>
+
+              {/* Trending Categories */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4" style={{ color: '#B40D05' }}>
+                  Trending Categories
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {trendingCategories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setSearchQuery(category);
+                        handleSearchSubmit({ preventDefault: () => {} } as React.FormEvent);
+                      }}
+                      className="text-left p-3 rounded-lg border border-gray-200 hover:border-[#407c0f] hover:bg-gray-50 transition-colors duration-200 group"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <svg className="h-4 w-4 text-gray-400 group-hover:text-[#407c0f]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                          {category}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Links */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="flex flex-wrap gap-4">
+                  <span className="text-sm text-gray-500">Quick links:</span>
+                  <Link to="/publications" className="text-sm text-[#407c0f] hover:underline">All Publications</Link>
+                  <Link to="/research" className="text-sm text-[#407c0f] hover:underline">Research Areas</Link>
+                  <Link to="/events" className="text-sm text-[#407c0f] hover:underline">Latest Events</Link>
+                  <Link to="/about" className="text-sm text-[#407c0f] hover:underline">About IRPIA</Link>
+                </div>
               </div>
             </div>
-          )}
-        </nav>
+          </div>
+        )}
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg border-t border-gray-200 z-40">
+            <div className="px-4 py-3 space-y-1">
+              {items.map((item) => (
+                <div key={item.name}>
+                  <Link
+                    to={item.href}
+                    className="block rounded-md px-3 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-[#B40D05] transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                  
+                  {/* Mobile submenu for Research and Publications */}
+                  {(item.name === "Research" || item.name === "Publications") && (
+                    <div className="ml-4 mt-2 space-y-2">
+                      {(item.name === "Research" ? researchMegaMenu : publicationsMegaMenu).map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          to={subItem.href}
+                          className="block rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#407c0f] transition-colors"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              
+              {/* Mobile Search */}
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => {
+                    setSearchOpen(!searchOpen);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center w-full px-3 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-[#B40D05] transition-colors rounded-md"
+                >
+                  <svg className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
     </div>
   );
