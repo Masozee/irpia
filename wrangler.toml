@@ -1,0 +1,22 @@
+name = "irpia"
+main = "build/server/index.js"
+assets = { directory = "./build/client", binding = "ASSETS" }
+compatibility_date = "2024-11-21"
+compatibility_flags = [ "nodejs_compat" ]
+
+[site]
+bucket = "./build/client"
+
+[[build.upload.rules]]
+type = "Text"
+globs = ["**/*.html", "**/*.txt"]
+
+[[build.upload.rules]]
+type = "Data"
+globs = ["**/*"]
+
+[env.production]
+routes = [
+  { pattern = "irpia.org", zone_name = "irpia.org" },
+  { pattern = "www.irpia.org", zone_name = "irpia.org" }
+]
