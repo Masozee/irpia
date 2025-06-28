@@ -261,21 +261,54 @@ export function Navigation({ items }: NavigationProps) {
               style={{ borderTopColor: '#B40D05' }}
             >
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeDropdown === "Research" ? researchMegaMenu : publicationsMegaMenu).map((menuItem) => (
-                    <Link
-                      key={menuItem.name}
-                      to={menuItem.href}
-                      className="group p-4 rounded-lg hover:bg-gray-50 transition-colors duration-200 block"
-                    >
-                      <div className="font-semibold text-gray-900 group-hover:text-[#B40D05] transition-colors mb-2">
-                        {menuItem.name}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                  {/* Featured Publication Card (Publications only) */}
+                  {activeDropdown === "Publications" && (
+                    <div className="lg:col-span-1">
+                      <div className="bg-gray-50 rounded-lg p-6 border">
+                        <div className="flex items-center mb-3">
+                          <span className="px-2 py-1 text-xs font-medium text-white rounded" style={{ backgroundColor: '#B40D05' }}>
+                            Policy Brief
+                          </span>
+                          <span className="ml-2 text-xs text-gray-500">Latest</span>
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                          Democratic Governance in West Africa
+                        </h4>
+                        <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                          Analysis of electoral processes and institutional capacity across West African nations.
+                        </p>
+                        <Link
+                          to="/publications/policy-briefs"
+                          className="inline-flex items-center text-xs font-medium hover:underline"
+                          style={{ color: '#B40D05' }}
+                        >
+                          Read More
+                          <svg className="ml-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          </svg>
+                        </Link>
                       </div>
-                      <div className="text-sm text-gray-600 group-hover:text-gray-700 leading-relaxed">
-                        {menuItem.description}
-                      </div>
-                    </Link>
-                  ))}
+                    </div>
+                  )}
+                  
+                  {/* Menu Items */}
+                  <div className={activeDropdown === "Publications" ? "lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6" : "lg:col-span-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"}>
+                    {(activeDropdown === "Research" ? researchMegaMenu : publicationsMegaMenu).map((menuItem) => (
+                      <Link
+                        key={menuItem.name}
+                        to={menuItem.href}
+                        className="group p-4 rounded-lg hover:bg-gray-50 transition-colors duration-200 block"
+                      >
+                        <div className="font-semibold text-gray-900 group-hover:text-[#B40D05] transition-colors mb-2">
+                          {menuItem.name}
+                        </div>
+                        <div className="text-sm text-gray-600 group-hover:text-gray-700 leading-relaxed">
+                          {menuItem.description}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
                 
                 <div className="mt-8 pt-6 border-t border-gray-200">
