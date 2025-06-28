@@ -108,7 +108,18 @@ export function Navigation({ items }: NavigationProps) {
     }
   };
 
-  const handleMouseLeave = () => {
+  const handleNavLeave = () => {
+    // Add a small delay before closing to allow moving to mega menu
+    setTimeout(() => {
+      setActiveDropdown(null);
+    }, 100);
+  };
+
+  const handleMegaMenuEnter = () => {
+    // Keep the mega menu open when hovering over it
+  };
+
+  const handleMegaMenuLeave = () => {
     setActiveDropdown(null);
   };
 
@@ -179,18 +190,15 @@ export function Navigation({ items }: NavigationProps) {
                       key={item.name}
                       className="relative"
                       onMouseEnter={() => handleMouseEnter(item.name)}
-                      onMouseLeave={handleMouseLeave}
+                      onMouseLeave={handleNavLeave}
                     >
                       <Link
                         to={item.href}
-                        className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 rounded-md ${
+                        className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 border-b-2 ${
                           activeDropdown === item.name 
-                            ? 'text-white' 
-                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'text-[#407c0f] border-[#407c0f]' 
+                            : 'text-gray-700 hover:text-[#407c0f] border-transparent hover:border-[#407c0f]'
                         }`}
-                        style={{
-                          backgroundColor: activeDropdown === item.name ? '#407c0f' : 'transparent'
-                        }}
                       >
                         {item.name}
                         {(item.name === "Research" || item.name === "Publications") && (
@@ -216,10 +224,10 @@ export function Navigation({ items }: NavigationProps) {
                 <div className="relative">
                   <button
                     onClick={handleSearchToggle}
-                    className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 rounded-md ${
+                    className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 border-b-2 ${
                       searchOpen 
-                        ? 'text-white bg-[#407c0f]' 
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'text-[#407c0f] border-[#407c0f]' 
+                        : 'text-gray-700 hover:text-[#407c0f] border-transparent hover:border-[#407c0f]'
                     }`}
                   >
                     <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -258,8 +266,8 @@ export function Navigation({ items }: NavigationProps) {
             <div 
               className="absolute top-full left-0 w-full bg-white shadow-2xl border-t-4 z-40"
               style={{ borderTopColor: '#B40D05' }}
-              onMouseEnter={() => setActiveDropdown(activeDropdown)}
-              onMouseLeave={handleMouseLeave}
+              onMouseEnter={handleMegaMenuEnter}
+              onMouseLeave={handleMegaMenuLeave}
             >
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
