@@ -192,16 +192,15 @@ export function Navigation({ items }: NavigationProps) {
                       onMouseEnter={() => handleMouseEnter(item.name)}
                       onMouseLeave={handleNavLeave}
                     >
-                      <Link
-                        to={item.href}
-                        className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 border-b-2 ${
-                          activeDropdown === item.name 
-                            ? 'text-[#407c0f] border-[#407c0f]' 
-                            : 'text-gray-700 hover:text-[#407c0f] border-transparent hover:border-[#407c0f]'
-                        }`}
-                      >
-                        {item.name}
-                        {(item.name === "Research" || item.name === "Publications") && (
+                      {(item.name === "Research" || item.name === "Publications") ? (
+                        <button
+                          className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 ${
+                            activeDropdown === item.name 
+                              ? 'text-[#407c0f]' 
+                              : 'text-gray-700 hover:text-[#407c0f]'
+                          }`}
+                        >
+                          {item.name}
                           <svg
                             className={`ml-1 h-4 w-4 transition-transform duration-200 ${
                               activeDropdown === item.name ? 'rotate-180' : ''
@@ -212,8 +211,15 @@ export function Navigation({ items }: NavigationProps) {
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                           </svg>
-                        )}
-                      </Link>
+                        </button>
+                      ) : (
+                        <Link
+                          to={item.href}
+                          className="flex items-center px-4 py-2 text-base font-medium transition-all duration-200 text-gray-700 hover:text-[#407c0f]"
+                        >
+                          {item.name}
+                        </Link>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -224,10 +230,10 @@ export function Navigation({ items }: NavigationProps) {
                 <div className="relative">
                   <button
                     onClick={handleSearchToggle}
-                    className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 border-b-2 ${
+                    className={`flex items-center px-4 py-2 text-base font-medium transition-all duration-200 ${
                       searchOpen 
-                        ? 'text-[#407c0f] border-[#407c0f]' 
-                        : 'text-gray-700 hover:text-[#407c0f] border-transparent hover:border-[#407c0f]'
+                        ? 'text-[#407c0f]' 
+                        : 'text-gray-700 hover:text-[#407c0f]'
                     }`}
                   >
                     <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
