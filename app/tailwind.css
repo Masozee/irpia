@@ -4,9 +4,46 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-white text-gray-900;
+  scroll-behavior: smooth;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+/* Remove all rounded corners globally */
+* {
+  border-radius: 0 !important;
+}
+
+/* Hide scrollbars for carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Brand colors as CSS custom properties */
+:root {
+  --brand-primary: #B40D05;
+  --brand-secondary: #407c0f;
+  --brand-primary-dark: #8B0A04;
+  --brand-secondary-dark: #2d5a0a;
 }
