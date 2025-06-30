@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
+import { useState } from "react";
 import { Navigation } from "~/components/Navigation";
 import { Footer } from "~/components/Footer";
 
@@ -11,6 +12,20 @@ export const meta: MetaFunction = () => {
 };
 
 export default function PolicyBriefs() {
+  const [selectedArea, setSelectedArea] = useState("All Research Areas");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("Latest First");
+
+  const filteredBriefs = policyBriefs.filter(brief => {
+    const matchesArea = selectedArea === "All Research Areas" || brief.researchArea === selectedArea;
+    const matchesSearch = searchQuery === "" || 
+      brief.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      brief.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      brief.author.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesArea && matchesSearch;
+  });
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation items={navItems} />
@@ -59,12 +74,6 @@ export default function PolicyBriefs() {
                 actionable insights for policymakers, practitioners, and stakeholders across Africa. 
                 Each brief presents evidence-based analysis with clear policy recommendations 
                 designed to inform decision-making and drive positive change.
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                Our policy briefs cover critical areas including security and peacebuilding, 
-                environmental sustainability, education and public health, governance and democracy, 
-                and economic development. They are designed to bridge the gap between academic 
-                research and practical policy implementation.
               </p>
               
               {/* Key Features */}
@@ -131,10 +140,14 @@ export default function PolicyBriefs() {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">By Dr. Catherine Mumbua</span>
-                  <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200" style={{ backgroundColor: '#407c0f' }}>
-                    Download PDF
-                    <DownloadIcon className="ml-2 h-4 w-4" />
-                  </button>
+                  <Link
+                    to="/publications/democratic-governance-west-africa"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200" 
+                    style={{ backgroundColor: '#407c0f' }}
+                  >
+                    Read Full Brief
+                    <ArrowRightIcon className="ml-2 h-4 w-4" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -142,13 +155,35 @@ export default function PolicyBriefs() {
         </div>
       </section>
 
-      {/* Policy Briefs List */}
+      {/* Search and Filter Section */}
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold" style={{ color: '#B40D05' }}>All Policy Briefs</h2>
-            <div className="flex items-center space-x-4">
-              <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <span className="text-sm text-gray-600">{filteredBriefs.length} briefs found</span>
+          </div>
+          
+          {/* Search and Filters */}
+          <div className="mb-8 space-y-4">
+            {/* Search Bar */}
+            <div className="relative max-w-2xl">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search policy briefs by title, author, or keywords..."
+                className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              />
+              <SearchIcon className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
+            </div>
+            
+            {/* Filter Controls */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
                 <option>All Research Areas</option>
                 <option>Security & Peacebuilding</option>
                 <option>Environmental Sustainability</option>
@@ -156,16 +191,23 @@ export default function PolicyBriefs() {
                 <option>Governance & Democracy</option>
                 <option>Economic Development</option>
               </select>
-              <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
+              
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
                 <option>Latest First</option>
                 <option>Oldest First</option>
                 <option>Most Downloaded</option>
+                <option>Alphabetical</option>
               </select>
             </div>
           </div>
           
+          {/* Policy Briefs Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {policyBriefs.map((brief, index) => (
+            {filteredBriefs.map((brief, index) => (
               <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
                 <img
                   src={brief.image}
@@ -182,15 +224,26 @@ export default function PolicyBriefs() {
                     </span>
                     <span className="text-sm text-gray-500">{brief.date}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">{brief.title}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+                    <Link 
+                      to={`/publications/${brief.slug}`}
+                      className="hover:text-red-600 transition-colors"
+                    >
+                      {brief.title}
+                    </Link>
+                  </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">{brief.excerpt}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">By {brief.author}</span>
                     <div className="flex items-center space-x-2">
                       <span className="text-xs text-gray-400">{brief.downloads} downloads</span>
-                      <button className="text-sm font-medium hover:underline" style={{ color: '#B40D05' }}>
-                        Download
-                      </button>
+                      <Link
+                        to={`/publications/${brief.slug}`}
+                        className="text-sm font-medium hover:underline"
+                        style={{ color: '#B40D05' }}
+                      >
+                        Read More
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -198,16 +251,16 @@ export default function PolicyBriefs() {
             ))}
           </div>
           
-          {/* Pagination */}
-          <div className="mt-12 flex items-center justify-center">
-            <nav className="flex items-center space-x-2">
-              <button className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">Previous</button>
-              <button className="px-3 py-2 text-sm font-medium text-white rounded-md" style={{ backgroundColor: '#B40D05' }}>1</button>
-              <button className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">2</button>
-              <button className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">3</button>
-              <button className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">Next</button>
-            </nav>
-          </div>
+          {/* No Results */}
+          {filteredBriefs.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <DocumentIcon className="w-16 h-16 mx-auto" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No policy briefs found</h3>
+              <p className="text-gray-600">Try adjusting your search criteria or filters.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -282,7 +335,8 @@ const policyBriefs = [
     date: "November 2024",
     researchArea: "Security",
     downloads: "1,245",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=300&fit=crop",
+    slug: "women-participation-peace"
   },
   {
     title: "Sustainable Water Management in Sub-Saharan Africa",
@@ -291,7 +345,8 @@ const policyBriefs = [
     date: "October 2024",
     researchArea: "Environment",
     downloads: "987",
-    image: "https://images.unsplash.com/photo-1569163139394-de44cb4b3a2a?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1569163139394-de44cb4b3a2a?w=400&h=300&fit=crop",
+    slug: "sustainable-water-management"
   },
   {
     title: "Strengthening Primary Healthcare Systems in Rural West Africa",
@@ -300,7 +355,8 @@ const policyBriefs = [
     date: "September 2024",
     researchArea: "Health",
     downloads: "1,567",
-    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop",
+    slug: "strengthening-primary-healthcare"
   },
   {
     title: "Fighting Corruption in African Governance: A Policy Framework",
@@ -309,7 +365,8 @@ const policyBriefs = [
     date: "August 2024",
     researchArea: "Governance",
     downloads: "2,134",
-    image: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&h=300&fit=crop",
+    slug: "fighting-corruption-governance"
   },
   {
     title: "Climate Adaptation Strategies for Coastal Communities",
@@ -318,7 +375,8 @@ const policyBriefs = [
     date: "July 2024",
     researchArea: "Environment",
     downloads: "1,876",
-    image: "https://images.unsplash.com/photo-1569163139394-de44cb4b3a2a?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1569163139394-de44cb4b3a2a?w=400&h=300&fit=crop",
+    slug: "climate-adaptation-coastal"
   },
   {
     title: "Digital Learning Technologies in African Education",
@@ -327,7 +385,8 @@ const policyBriefs = [
     date: "June 2024",
     researchArea: "Education",
     downloads: "1,432",
-    image: "https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=400&h=300&fit=crop",
+    slug: "digital-learning-technologies"
   }
 ];
 
@@ -356,10 +415,18 @@ function LightBulbIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function DownloadIcon(props: React.SVGProps<SVGSVGElement>) {
+function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
     </svg>
   );
 }

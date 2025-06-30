@@ -1,4 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
+import { Navigation } from "~/components/Navigation";
+import { Footer } from "~/components/Footer";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,6 +12,7 @@ export const meta: MetaFunction = () => {
 export default function Contact() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      <Navigation items={navItems} />
       <div className="relative isolate">
         <div className="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
           <div className="relative px-6 pb-20 pt-24 sm:pt-32 lg:static lg:px-8 lg:py-48">
@@ -230,9 +233,18 @@ export default function Contact() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
+
+const navItems = [
+  { name: 'About', href: '/about' },
+  { name: 'Research', href: '/research', hasMegaMenu: true },
+  { name: 'Publications', href: '/publications', hasMegaMenu: true },
+  { name: 'Events', href: '/events' },
+  { name: 'Contact', href: '/contact' },
+];
 
 const services = [
   {

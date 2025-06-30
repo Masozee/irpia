@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
+import { useState } from "react";
 import { Navigation } from "~/components/Navigation";
 import { Footer } from "~/components/Footer";
 
@@ -11,6 +12,20 @@ export const meta: MetaFunction = () => {
 };
 
 export default function ResearchPapers() {
+  const [selectedArea, setSelectedArea] = useState("All Research Areas");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("Latest First");
+
+  const filteredPapers = researchPapers.filter(paper => {
+    const matchesArea = selectedArea === "All Research Areas" || paper.researchArea === selectedArea;
+    const matchesSearch = searchQuery === "" || 
+      paper.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      paper.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      paper.author.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesArea && matchesSearch;
+  });
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation items={navItems} />
@@ -185,10 +200,32 @@ export default function ResearchPapers() {
       {/* Research Papers List */}
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold" style={{ color: '#2563eb' }}>All Research Papers</h2>
-            <div className="flex items-center space-x-4">
-              <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <span className="text-sm text-gray-600">{filteredPapers.length} papers found</span>
+          </div>
+          
+          {/* Search and Filters */}
+          <div className="mb-8 space-y-4">
+            {/* Search Bar */}
+            <div className="relative max-w-2xl">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search research papers by title, author, or keywords..."
+                className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <SearchIcon className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
+            </div>
+            
+            {/* Filter Controls */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
                 <option>All Research Areas</option>
                 <option>Security & Peacebuilding</option>
                 <option>Environmental Sustainability</option>
@@ -196,7 +233,12 @@ export default function ResearchPapers() {
                 <option>Governance & Democracy</option>
                 <option>Economic Development</option>
               </select>
-              <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
+              
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
                 <option>Latest First</option>
                 <option>Oldest First</option>
                 <option>Most Cited</option>
@@ -206,7 +248,7 @@ export default function ResearchPapers() {
           </div>
           
           <div className="space-y-8">
-            {researchPapers.map((paper, index) => (
+            {filteredPapers.map((paper, index) => (
               <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 mr-6">
@@ -230,9 +272,13 @@ export default function ResearchPapers() {
                         <span className="text-sm text-gray-500">{paper.downloads} downloads</span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <button className="text-sm font-medium hover:underline" style={{ color: '#2563eb' }}>
-                          View Abstract
-                        </button>
+                        <Link
+                          to={`/publications/${paper.slug || 'research-paper'}`}
+                          className="text-sm font-medium hover:underline"
+                          style={{ color: '#2563eb' }}
+                        >
+                          Read More
+                        </Link>
                         <button className="text-sm font-medium hover:underline" style={{ color: '#059669' }}>
                           Download PDF
                         </button>
@@ -246,6 +292,17 @@ export default function ResearchPapers() {
               </div>
             ))}
           </div>
+          
+          {/* No Results */}
+          {filteredPapers.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <DocumentTextIcon className="w-16 h-16 mx-auto" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No research papers found</h3>
+              <p className="text-gray-600">Try adjusting your search criteria or filters.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -320,40 +377,44 @@ const researchPapers = [
     abstract: "This study examines climate change impacts on coastal communities and evaluates adaptive strategies for building resilience. Using mixed-methods research, we analyze vulnerability patterns and community responses to sea-level rise, erosion, and extreme weather events.",
     author: "Dr. Michael Osei",
     date: "November 2024",
-    researchArea: "Environment",
+    researchArea: "Environmental Sustainability",
     pages: "38",
     citations: "12",
     downloads: "2,456",
+    slug: "climate-adaptation-coastal"
   },
   {
     title: "Education Policy Reform in Post-Conflict Settings: Evidence from Sierra Leone and Liberia",
     abstract: "This comparative analysis examines education system reconstruction in post-conflict African societies, focusing on policy reforms, institutional rebuilding, and lessons learned from Sierra Leone and Liberia's experiences.",
     author: "Dr. Amina Diallo",
     date: "October 2024",
-    researchArea: "Education",
+    researchArea: "Education & Public Health",
     pages: "52",
     citations: "8",
     downloads: "1,987",
+    slug: "education-policy-post-conflict"
   },
   {
     title: "Democratic Consolidation and Electoral Integrity in West Africa: Trends and Challenges",
     abstract: "This paper analyzes democratic institutions and electoral processes across West African nations, examining trends in electoral integrity, institutional capacity, and challenges to democratic consolidation.",
     author: "Prof. Catherine Mumbua",
     date: "September 2024",
-    researchArea: "Governance",
+    researchArea: "Governance & Democracy",
     pages: "47",
     citations: "15",
     downloads: "3,124",
+    slug: "democratic-governance-west-africa"
   },
   {
     title: "Security Sector Reform in Post-Conflict Guinea-Bissau: Lessons and Challenges",
     abstract: "This study evaluates security sector reform efforts in Guinea-Bissau, analyzing the impact on democratic consolidation, institutional development, and stability in the post-conflict period.",
     author: "Prof. Emmanuel Kwame",
     date: "August 2024",
-    researchArea: "Security",
+    researchArea: "Security & Peacebuilding",
     pages: "41",
     citations: "6",
     downloads: "1,678",
+    slug: "security-cooperation-mano-river"
   }
 ];
 
@@ -410,6 +471,14 @@ function PaperAirplaneIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+    </svg>
+  );
+}
+
+function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
     </svg>
   );
 }
